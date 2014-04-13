@@ -1,0 +1,71 @@
+<html>
+  <head>
+    <title>Websocket Debug</title>
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-2.1.0.min.js" type="text/javascript" language="javascript"></script>
+    <style>
+      .container {
+
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="jumbotron">
+        <h1>Websocket Debug</h1>
+      </div>
+      <form role="form">
+        <div class="row">
+          <div class="col-lg-offset-3 col-lg-6">
+            <div class="input-group">
+              <input type="text" id="uri" class="form-control" placeholder="ws://localhost:8080">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button" id="go">Connect</button>
+              </span>
+            </div>
+            <div class="input-group">
+              <input type="text" id="message" class="form-control" placeholder="message">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button" id="send">Send</button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div>
+        <pre id="output"></pre>
+      </div>
+    </div>
+
+
+    <script type="text/javascript" language="javascript">
+      var websocket;
+
+      $('#go').click(connect);
+      $('#send').click(send);
+
+      function log(msg) {
+        $('#output').append(msg + '\n');
+        console.log(msg);
+      }
+
+      function connect() {
+        uri = $('#uri').val();
+        websocket = new WebSocket(uri);
+        websocket.onopen = function(evt) { log('Opened: ' + uri); };
+        websocket.onclose = function(evt) { log('Closed: ' + uri); };
+        websocket.onmessage = function(evt) { log('Message: ' + evt.data); };
+        websocket.onerror = function(evt) { log('Error: ' + evt) };
+      }
+
+      function send() {
+        message = $('#message').val();
+        log('Sent: ' + message);
+        websocket.send(message);
+      }
+    </script>
+
+
+  </body>
+</html>
