@@ -45,18 +45,19 @@
       $('#go').click(connect);
       $('#send').click(send);
 
-      function log(msg) {
-        $('#output').append(msg + '\n');
+      function log(msg, data) {
+        $('#output').append(msg + ': ' + JSON.stringify(data) + '\n');
         console.log(msg);
+        console.log(data);
       }
 
       function connect() {
         uri = $('#uri').val();
         websocket = new WebSocket(uri);
-        websocket.onopen = function(evt) { log('Opened: ' + uri); };
-        websocket.onclose = function(evt) { log('Closed: ' + uri); };
-        websocket.onmessage = function(evt) { log('Message: ' + evt.data); };
-        websocket.onerror = function(evt) { log('Error: ' + evt) };
+        websocket.onopen = function(evt) { log('Opened', uri); };
+        websocket.onclose = function(evt) { log('Closed', uri); };
+        websocket.onmessage = function(evt) { log('Message', evt.data); };
+        websocket.onerror = function(evt) { log('Error', evt); };
       }
 
       function send() {
