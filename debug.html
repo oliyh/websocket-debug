@@ -28,7 +28,7 @@
             <div class="input-group">
               <input type="text" id="message" class="form-control" placeholder="message">
               <span class="input-group-btn">
-                <button class="btn btn-default" type="button" id="send">Send</button>
+                <button disabled="true" class="btn btn-default" type="button" id="send">Send</button>
               </span>
             </div>
           </div>
@@ -51,26 +51,36 @@
       $('#clear-log').click(clearLog);
 
       function log(msg, data) {
-        $('#output').append(msg + ': ' + JSON.stringify(data) + '\n');
-        console.log(msg);
+        now = new Date().toISOString();
+        $('#output').prepend(now + ': ' + msg + ' - ' + JSON.stringify(data) + '\n');
+        console.log(now + ': ' + msg);
         console.log(data);
       }
 
       function connect() {
         uri = $('#uri').val();
         websocket = new WebSocket(uri);
-        websocket.onopen = function(evt) { log('Opened', uri); };
-        websocket.onclose = function(evt) { log('Closed', uri); };
+        websocket.onopen = function(evt) { log('Opened', uri); onConnect(); };
+        websocket.onclose = function(evt) { log('Closed', uri); onDisconnect() };
         websocket.onmessage = function(evt) { log('Message', evt.data); };
         websocket.onerror = function(evt) { log('Error', evt); };
+      }
+
+      function onConnect() {
         $('#disconnect').show();
         $('#go').hide();
+        $('#send').prop('disabled', false);
       }
 
       function disconnect() {
         websocket.close();
+        onDisconnect();
+      }
+
+      function onDisconnect() {
         $('#go').show();
         $('#disconnect').hide();
+        $('#send').prop('disabled', true);
       }
 
       function send() {
